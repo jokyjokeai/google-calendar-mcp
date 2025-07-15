@@ -12,7 +12,7 @@ services:
     environment:
       - NODE_ENV=production
       - TRANSPORT=sse
-      - PORT=8000
+      - PORT=8001
     
     # Volume for tokens (pas de mount local)
     volumes:
@@ -21,7 +21,7 @@ services:
     
     # Port SSE
     ports:
-      - "8000:8000"
+      - "8001:8001"
     
     # Keep the rest
     deploy:

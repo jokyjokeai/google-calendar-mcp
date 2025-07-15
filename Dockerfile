@@ -1,6 +1,4 @@
 # Google Calendar MCP Server - Optimized Dockerfile
-# syntax=docker/dockerfile:1
-
 FROM node:18-alpine
 
 # Create app user for security
@@ -32,11 +30,15 @@ RUN mkdir -p /home/nodejs/.config/google-calendar-mcp && \
     chown -R nodejs:nodejs /home/nodejs/.config && \
     chown -R nodejs:nodejs /app
 
+# Copy startup script
+COPY startup.sh /app/
+RUN chmod +x /app/startup.sh && chown nodejs:nodejs /app/startup.sh
+
 # Switch to non-root user
 USER nodejs
 
-# Expose port for HTTP mode (optional)
-EXPOSE 3000
+# Expose port for SSE transport
+EXPOSE 8000
 
-# Default command - run directly to avoid npm output
-CMD ["node", "build/index.js"]
+# Use startup script to handle tokens
+CMD ["/app/startup.sh"]

@@ -20,4 +20,4 @@ fi
 
 # Start the server with SSE transport
 echo "Starting server on port 8000 with SSE transport..."
-exec node /app/build/index.js --transport sse --port 8000
+exec node /app/build/index.js --transport sse --port 8001

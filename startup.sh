@@ -19,7 +19,7 @@ if [ -f "/app/config/gcp-oauth.keys.json" ]; then
   # Start the server with HTTP transport
   echo "Starting server on port 8001 with HTTP transport..."
   cd /app
-  exec node build/index.js --transport http --port 8001
+  exec node build/index.js --transport http --port 8001 --host 0.0.0.0
   
 else
   echo "⚠️ WARNING: No credentials found in /app/config/"

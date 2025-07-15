@@ -2,20 +2,41 @@
 
 echo "Starting Google Calendar MCP Server..."
 
-# First time setup - build the project if needed
-if [ ! -d "/app/build" ]; then
-  echo "First run detected, building project..."
+# Create config directory if needed
+mkdir -p /home/nodejs/.config/google-calendar-mcp
+
+# Check if credentials exist
+if [ -f "/app/config/gcp-oauth.keys.json" ]; then
+  echo "✅ Credentials found..."
+  export GOOGLE_OAUTH_CREDENTIALS="/app/config/gcp-oauth.keys.json"
+  
+  # Check tokens
+  if [ -f "/app/config/tokens.json" ]; then
+    echo "✅ Tokens found, copying..."
+    cp /app/config/tokens.json /home/nodejs/.config/google-calendar-mcp/tokens.json
+  fi
+  
+  # Start the server
+  echo "Starting server on port 8001..."
   cd /app
-  npm install
-  npm run build
+  exec node build/index.js --transport sse --port 8001
+  
+else
+  echo "⚠️ WARNING: No credentials found in /app/config/"
+  echo "The server needs gcp-oauth.keys.json to start."
+  echo "Please upload the credentials to the volume."
+  echo ""
+  echo "Keeping container alive for credential upload..."
+  
+  # Keep container running without crashing
+  while true; do
+    sleep 60
+    echo "Waiting for credentials in /app/config/gcp-oauth.keys.json..."
+    
+    # Check if credentials appeared
+    if [ -f "/app/config/gcp-oauth.keys.json" ]; then
+      echo "✅ Credentials detected! Restarting..."
+      exec "$0"
+    fi
+  done
 fi
-
-# Check tokens...
-if [ -f "/app/config/tokens.json" ]; then
-  echo "✅ Tokens found in volume..."
-  cp /app/config/tokens.json /home/nodejs/.config/google-calendar-mcp/tokens.json
-fi
-
-# Start server
-cd /app
-exec node build/index.js --transport sse --port 8001

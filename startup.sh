@@ -16,10 +16,10 @@ if [ -f "/app/config/gcp-oauth.keys.json" ]; then
     cp /app/config/tokens.json /home/nodejs/.config/google-calendar-mcp/tokens.json
   fi
   
-  # Start the server WITHOUT transport argument (use default stdio)
-  echo "Starting server on port 8001..."
+  # Start the server with HTTP transport
+  echo "Starting server on port 8001 with HTTP transport..."
   cd /app
-  exec node build/index.js --port 8001
+  exec node build/index.js --transport http --port 8001
   
 else
   echo "⚠️ WARNING: No credentials found in /app/config/"
